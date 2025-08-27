@@ -2,6 +2,122 @@
 
 Sistema de gestión de reservas de películas en salas de cine con validaciones de capacidad y prevención de sobreventa.
 
+## 🏗️ Decisiones de Arquitectura
+
+### **Enfoque General**
+Este proyecto implementa una **arquitectura de microservicios monolíticos** (monorepo) que permite escalabilidad futura manteniendo la simplicidad inicial. La separación clara entre frontend y backend facilita el desarrollo independiente y la implementación de diferentes patrones de diseño.
+
+### **Patrones de Diseño Implementados**
+
+#### **Backend (NestJS)**
+- **🔄 Repository Pattern**: Prisma actúa como repositorio abstracto, encapsulando la lógica de acceso a datos
+- **🏭 Factory Pattern**: Servicios crean instancias de entidades con validaciones
+- **🛡️ Decorator Pattern**: Validaciones con `class-validator` y `class-transformer`
+- **📋 DTO Pattern**: Data Transfer Objects para validación de entrada/salida
+- **🔧 Dependency Injection**: NestJS IoC container para gestión de dependencias
+- **🎯 Single Responsibility**: Cada módulo tiene una responsabilidad específica
+
+#### **Frontend (Next.js)**
+- **📦 Component Pattern**: Componentes reutilizables (Toast, formularios)
+- **🎨 Container/Presentational**: Separación de lógica y presentación
+- **🔄 State Management**: React hooks para gestión de estado local
+- **🌐 Service Layer**: Cliente API centralizado para comunicación con backend
+
+### **Decisiones Técnicas y Trade-offs**
+
+#### **✅ Decisiones Acertadas**
+
+**1. NestJS como Backend Framework**
+- **Pros**: Arquitectura modular, decoradores, validación integrada, Swagger automático
+- **Trade-off**: Curva de aprendizaje inicial vs productividad a largo plazo
+- **Resultado**: Código más mantenible y escalable
+
+**2. Prisma como ORM**
+- **Pros**: Type safety, migraciones automáticas, Prisma Studio, seed scripts
+- **Trade-off**: Menos flexibilidad que TypeORM vs mejor DX
+- **Resultado**: Desarrollo más rápido y menos errores
+
+**3. Monorepo Structure**
+- **Pros**: Código compartido, versionado unificado, despliegue coordinado
+- **Trade-off**: Complejidad inicial vs beneficios de mantenimiento
+- **Resultado**: Facilita el desarrollo y testing
+
+**4. Tailwind CSS**
+- **Pros**: Desarrollo rápido, consistencia visual, responsive design
+- **Trade-off**: Bundle size vs velocidad de desarrollo
+- **Resultado**: UI moderna y mantenible
+
+#### **🔄 Alternativas Consideradas**
+
+**Base de Datos**
+- **PostgreSQL vs MySQL**: Elegido PostgreSQL por mejor soporte JSON y transacciones
+- **SQLite**: Rechazado por limitaciones en concurrencia
+
+**Frontend Framework**
+- **React vs Vue**: Next.js elegido por SSR y optimizaciones
+- **Vanilla JS**: Rechazado por complejidad de gestión de estado
+
+**Styling**
+- **CSS Modules vs Tailwind**: Tailwind elegido por velocidad de desarrollo
+- **Styled Components**: Rechazado por overhead de runtime
+
+### **Arquitectura de Datos**
+
+#### **Modelo Relacional**
+```
+Movies (1) ←→ (N) Showtimes (N) ←→ (1) CinemaHalls
+                    ↓
+                Tickets (N)
+```
+
+#### **Validaciones de Negocio**
+- **Transacciones**: Evitan race conditions en compra de tickets
+- **Constraints**: Validaciones a nivel de base de datos
+- **Business Logic**: Reglas implementadas en servicios
+
+### **Seguridad y Validación**
+
+#### **Backend**
+- **Input Validation**: `class-validator` para DTOs
+- **SQL Injection**: Prevenido por Prisma ORM
+- **CORS**: Configurado para desarrollo local
+- **Error Handling**: Excepciones estructuradas con códigos HTTP apropiados
+
+#### **Frontend**
+- **XSS Prevention**: React sanitiza automáticamente
+- **CSRF**: No aplicable en APIs REST
+- **Input Sanitization**: Validación en cliente y servidor
+
+### **Escalabilidad y Performance**
+
+#### **Optimizaciones Implementadas**
+- **Lazy Loading**: Componentes cargados bajo demanda
+- **Database Indexing**: Índices en campos de búsqueda frecuente
+- **Connection Pooling**: Prisma maneja conexiones eficientemente
+- **Caching Strategy**: Preparado para implementar Redis
+
+#### **Bottlenecks Identificados**
+- **N+1 Queries**: Resuelto con `include` en Prisma
+- **Large Datasets**: Paginación preparada en endpoints
+- **Concurrent Purchases**: Transacciones para evitar overbooking
+
+### **Roadmap y Mejoras Futuras**
+
+#### **Corto Plazo**
+- [ ] Implementar tests unitarios y de integración
+- [ ] Agregar autenticación JWT
+- [ ] Implementar paginación en listados
+
+#### **Mediano Plazo**
+- [ ] Microservicios para escalabilidad
+- [ ] Redis para caching
+- [ ] WebSockets para actualizaciones en tiempo real
+
+#### **Largo Plazo**
+- [ ] Kubernetes deployment
+- [ ] CI/CD pipeline
+- [ ] Monitoring y alerting
+
 ## 📋 Requisitos
 
 - **Node.js**: 20+ (recomendado)

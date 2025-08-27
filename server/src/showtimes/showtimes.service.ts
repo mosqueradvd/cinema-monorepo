@@ -21,17 +21,39 @@ export class ShowtimesService {
     return this.prisma.showtime.create({ data });
   }
 
-  findAll() {
-    return this.prisma.showtime.findMany({ include: { hall: true, movie: true } });
+  async findAll() {
+    const showtimes = await this.prisma.showtime.findMany({ 
+      include: { 
+        hall: true, 
+        movie: true,
+        tickets: true 
+      } 
+    });
+
+    // Add ticket count to each showtime
+    return showtimes.map(showtime => ({
+      ...showtime,
+      ticketsSold: showtime.tickets.length,
+      isSoldOut: showtime.tickets.length >= showtime.hall.capacity
+    }));
   }
 
   async findOne(id: number) {
     const st = await this.prisma.showtime.findUnique({
       where: { id },
-      include: { hall: true, movie: true },
+      include: { 
+        hall: true, 
+        movie: true,
+        tickets: true 
+      },
     });
     if (!st) throw new NotFoundException('Showtime not found');
-    return st;
+    
+    return {
+      ...st,
+      ticketsSold: st.tickets.length,
+      isSoldOut: st.tickets.length >= st.hall.capacity
+    };
   }
 
   async remove(id: number) {

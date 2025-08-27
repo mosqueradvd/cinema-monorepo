@@ -2,6 +2,9 @@
 
 Sistema de gestión de reservas de películas en salas de cine con validaciones de capacidad y prevención de sobreventa.
 
+<img width="1509" height="901" alt="image" src="https://github.com/user-attachments/assets/ac546c84-8959-4ecd-a5ad-1e1cc2d72d1a" />
+<img width="1509" height="901" alt="image" src="https://github.com/user-attachments/assets/400815fc-6db1-4d63-a42a-cccec5a036c8" />
+
 ## 🏗️ Decisiones de Arquitectura
 
 ### **Enfoque General**
